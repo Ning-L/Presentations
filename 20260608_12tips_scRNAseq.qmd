@@ -1,0 +1,303 @@
+---
+title: "Twelve Tips for Reproducible Analysis of Single-Cell Transcriptomics Data"
+subtitle: "Journal Club InforBio"
+author: "Lijiao NING"
+date: "2026-06-08"
+embed-resources: true
+format:
+   revealjs: 
+      slide-number: true
+   pdf:
+     toc: true
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+## Pourquoi cet article ? {.smaller}
+
+### Constat 
+
+doi: [10.1145/3736731.3746138](https://doi.org/10.1145/3736731.3746138)
+
+- Les analyses scRNA-seq sont complexes et très paramétrables
+- Les résultats (UMAP, clustering, DE) dépendent souvent :
+  - des paramètres
+  - des versions logicielles
+  - de l'environnement de calcul
+- Les notebooks seuls ne garantissent pas la reproductibilité
+- Beaucoup d'articles ne fournissent pas suffisamment de code ou de documentation
+
+::: {.callout-note title="Objectif de l'article"}
+Proposer une **architecture complète** permettant de réaliser des analyses scRNA-seq reproductibles.
+:::
+
+## Répétabilité *vs.* reproductibilité {.smaller}
+
+
+::: {.columns}
+
+::: {.column}
+
+#### Répétabilité
+
+- Même données/méthodes/ordinateur
+
+→ mêmes résultats
+
+:::
+
+::: {.column}
+
+#### Reproductibilité
+
+- Même données/méthodes
+- Mais **ordinateur différent**
+
+→ mêmes résultats
+:::
+
+:::
+
+::: {.callout-important title="Message central"}
+- Un notebook seul favorise la répétabilité.
+- Pour obtenir la reproductibilité il faut aussi contrôler l'environnement logiciel.
+::: 
+
+
+## Les 12 tips {.smaller}
+
+Les auteurs regroupent les recommandations en 4 thèmes :
+
+::: {.columns}
+
+::: {.column}
+
+1. **Organisation du workflow**
+   - notebooks
+   - arborescence des fichiers
+
+2. **Analyse des données**
+   - metadata
+   - traitement individuel
+   - intégration
+   - analyses biologiques
+   - figures
+
+:::
+
+::: {.column}
+
+3. **Reproductibilité informatique**
+   - fonctions
+   - conteneur
+   - vérification
+
+4. **Accessibilité**
+   - portail web
+   - partage
+
+:::
+
+:::
+
+
+## Tip 1 : notebook structuré
+
+![Figure 2, Onfroy et al. (2025)](figures/fig2_struct_notebook.jpg)
+
+## Utiliser des notebooks structurés {.smaller}
+
+Les auteurs recommandent :
+
+- même structure dans tous les notebooks
+- paramètres globaux au début
+- chargement des données séparé du traitement
+- chemins relatifs
+- commentaires en langage naturel
+- `sessionInfo()` à la fin
+
+::: {.callout-important}
+Rendre fréquemment les notebooks pour vérifier qu'ils s'exécutent du début à la fin.
+:::
+
+## Tip 2 : arborescence du projet
+
+![Figure 3, Onfroy et al. (2025)](figures/fig3_folder_tree.jpg)
+
+## Organiser le projet {.smaller}
+
+Chaque étape possède son propre notebook.
+
+
+::: {.columns}
+
+::: {.column}
+
+Structure proposée :
+
+1. metadata
+2. individual datasets
+3. combined datasets
+4. biological analyses
+5. final figures
+:::
+
+::: {.column}
+
+::: {.callout-tip title="Intérêt"}
+- navigation facile
+- moins de copier-coller
+- reprise facile de l'analyse
+- traçabilité des résultats
+:::
+
+:::
+
+:::
+
+
+## Tip 3 : centraliser les metadata {.smaller}
+
+::: {.callout-tip title="Pourquoi ?"}
+Éviter :
+
+- incohérences
+- copier-coller
+- erreurs entre notebooks
+:::
+
+Exemples :
+
+- description des échantillons
+- couleurs
+- marqueurs cellulaires
+- annotations
+
+
+## Définir les metadata une seule fois
+
+![Figure 4, Onfroy et al. (2025)](figures/fig4_metadata.jpg)
+
+
+## Workflow d'analyse proposé {.smaller}
+
+::: {.columns}
+
+::: {.column}
+
+#### 1. Traitement individuel
+
+- QC
+- filtrage
+- normalisation
+- annotation
+
+#### 2. Intégration
+
+- fusion des jeux de données
+- correction batch éventuelle
+:::
+
+::: {.column}
+
+#### 3. Analyse biologique
+
+- DE
+- enrichissement
+- analyses spécifiques
+
+#### 4. Figures finales
+
+Notebook dédié
+
+:::
+
+:::
+
+
+## Les tips 8-10 : rendre l'analyse reproductible {.smaller}
+
+::: {.columns}
+
+::: {.column}
+
+#### Fonctions personnalisées
+
+- centralisées dans un package
+
+#### Conteneur logiciel
+
+Apptainer ou Docker, qui contient :
+
+- OS
+- R
+- packages
+- dépendances
+:::
+
+::: {.column}
+
+#### Vérification
+
+Rejouer les notebooks dans le conteneur :
+
+- même nombre de cellules
+- mêmes annotations
+- mêmes résultats biologiques
+
+Fixer les random seeds.
+
+:::
+
+:::
+
+## Les tips 11–12 : partager l'analyse {.smaller}
+
+::: {.callout-tip title="Objectif"}
+Permettre à un tiers de comprendre et reproduire l'analyse.
+:::
+
+Les auteurs proposent de créer une vue globale du projet, avec :
+
+- génération automatique d'un portail HTML
+- navigation entre notebooks
+- GitHub Pages
+
+Partage de :
+
+- codes
+- environnement logiciel
+- données
+
+
+## Utilisation de Zenodo {.smaller}
+
+[Zenodo](https://zenodo.org) est un dépôt scientifique géré par le CERN (Centre Europeen de Recherche Nucleaire).
+
+- Exemple : Développement sur GitHub → Release v1.0 → Connexion GitHub-Zenodo → Archive automatique → DOI
+
+
+Les auteurs ont déposé sur Zenodo :
+
+- les matrices de comptage ;
+- les notebooks ;
+- leur package aquarius ;
+- le conteneur Apptainer ;
+- le repertoire GitHub de l'outil d'organisation des HTML.
+
+::: {.callout-tip appearance="minimal"}
+- GitHub sert au développement et au partage du code 
+- Zenodo sert à archiver une version figée et citable (DOI) garantissant la reproductibilité à long terme.
+:::
+
+## Messages à retenir {.smaller}
+
+- La reproductibilité est considérée comme une composante du workflow dès le début du projet.
+
+- Les notebooks aident, mais ne suffisent pas sans gestion des fichiers et de l’environnement.
+
+::: {.callout-tip title="message final"}
+Moins de chaos, plus de traçabilité, et plus de confiance dans les résultats.
+::: 
